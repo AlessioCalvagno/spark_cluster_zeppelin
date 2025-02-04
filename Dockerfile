@@ -15,8 +15,6 @@ SPARK_MASTER="spark://spark-master:7077" \
 SPARK_WORKLOAD="master"
 # SPARK_WORKER_PORT=7000
 
-# EXPOSE 8080 7077 6066
-
 #creates the log dir (if not already created) and creates log files as empty files
 RUN mkdir -p $SPARK_LOG_DIR && \
 touch $SPARK_MASTER_LOG && \
@@ -26,6 +24,9 @@ ln -sf /dev/stdout $SPARK_WORKER_LOG
 
 COPY start-spark.sh /
 
+#switch to user root for workaround with zeppelin: zeppelin asks worker to create subdirectories under
+#/opt/spark/work, but this dir has root ownership.
+#TODO: change directory ownership/permission to 'spark' user (read and write access).
 USER root
 
 CMD ["bash","/start-spark.sh"]

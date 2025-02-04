@@ -3,7 +3,6 @@ services:
 #              SPARK CLUSTER                #
 #############################################
   spark-master:
-    # build: .
     image: spark_cluster:latest
     container_name: spark-master
     ports:
@@ -14,10 +13,8 @@ services:
     volumes:
       - shared_data:/opt/spark
       - ./data:/opt/spark/data
-    # command: bash -c "whoami && pwd && ls -la"
 
   spark-worker-1:
-    # build: .
     image: spark_cluster:latest
     container_name: spark-worker-1
     depends_on:
@@ -31,18 +28,6 @@ services:
       - shared_data:/opt/spark
       - ./data:/data
 
-  # spark-worker-2:
-  #  image: bde2020/spark-worker:latest
-  #  container_name: spark-worker-2
-  #  depends_on:
-  #    - spark-master
-  #  ports:
-  #    - "8083:8081"
-  #  environment:
-  #    - "SPARK_MASTER=spark://spark-master:7077"
-  #  volumes:
-  #    - shared_data:/spark
-  #    - ./data:/data
 #############################################
 #               ZEPPELIN                    #
 #############################################
