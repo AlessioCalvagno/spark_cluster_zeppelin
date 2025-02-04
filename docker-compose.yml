@@ -1,0 +1,63 @@
+services:
+#############################################      
+#              SPARK CLUSTER                #
+#############################################
+  spark-master:
+    # build: .
+    image: spark_cluster:latest
+    container_name: spark-master
+    ports:
+      - "8081:8080"
+      - "7077:7077"
+    environment:
+      - SPARK_WORKLOAD=master
+    volumes:
+      - shared_data:/opt/spark
+      - ./data:/opt/spark/data
+    # command: bash -c "whoami && pwd && ls -la"
+
+  spark-worker-1:
+    # build: .
+    image: spark_cluster:latest
+    container_name: spark-worker-1
+    depends_on:
+      - spark-master
+    ports:
+      - "8082:8081"
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKLOAD=worker
+    volumes:
+      - shared_data:/opt/spark
+      - ./data:/data
+
+  # spark-worker-2:
+  #  image: bde2020/spark-worker:latest
+  #  container_name: spark-worker-2
+  #  depends_on:
+  #    - spark-master
+  #  ports:
+  #    - "8083:8081"
+  #  environment:
+  #    - "SPARK_MASTER=spark://spark-master:7077"
+  #  volumes:
+  #    - shared_data:/spark
+  #    - ./data:/data
+#############################################
+#               ZEPPELIN                    #
+#############################################
+  zeppelin:
+    image: apache/zeppelin:0.11.2
+    container_name: zeppelin
+    ports:
+      - "8080:8080"
+    volumes:
+      - shared_data:/zeppelin/spark
+      - ./notebooks:/opt/zeppelin/notebook
+      - ./data:/data
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_HOME=/zeppelin/spark
+      - PYSPARK_PYTHON=python3
+volumes:
+  shared_data:
