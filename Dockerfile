@@ -1,6 +1,20 @@
 FROM spark:latest
 
+#switch to user root for workaround with zeppelin: zeppelin asks worker to create subdirectories under
+#/opt/spark/work, but this dir has root ownership.
+#TODO: change directory ownership/permission to 'spark' user (read and write access).
+USER root
+
 WORKDIR /opt/spark
+
+
+
+# Install Python 3.9
+RUN apt-get update && apt-get install -y python3.9 python3.9-venv python3.9-dev
+
+# Set env vars to use Python3.9 and not system default python3
+ENV PYSPARK_PYTHON=/usr/bin/python3.9 \
+    PYSPARK_DRIVER_PYTHON=/usr/bin/python3.9
 
 #https://spark.apache.org/docs/latest/spark-standalone.html
 #https://dev.to/mvillarrealb/creating-a-spark-standalone-cluster-with-docker-and-docker-compose-2021-update-6l4
@@ -23,10 +37,5 @@ ln -sf /dev/stdout $SPARK_MASTER_LOG && \
 ln -sf /dev/stdout $SPARK_WORKER_LOG
 
 COPY start-spark.sh /
-
-#switch to user root for workaround with zeppelin: zeppelin asks worker to create subdirectories under
-#/opt/spark/work, but this dir has root ownership.
-#TODO: change directory ownership/permission to 'spark' user (read and write access).
-USER root
 
 CMD ["bash","/start-spark.sh"]

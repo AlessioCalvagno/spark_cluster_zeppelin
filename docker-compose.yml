@@ -8,6 +8,7 @@ services:
     ports:
       - "8081:8080"
       - "7077:7077"
+      - "4040:4040"
     environment:
       - SPARK_WORKLOAD=master
     volumes:
@@ -43,7 +44,8 @@ services:
     environment:
       - SPARK_MASTER=spark://spark-master:7077
       - SPARK_HOME=/zeppelin/spark
-      - PYSPARK_PYTHON=python3
-      - PYSPARK_DRIVER_PYTHON=python3
+      - PYSPARK_PYTHON=python3.9 #inside workers
+      - PYSPARK_DRIVER_PYTHON=python3 #inside zeppelin (here python3 = python3.9)
+    user: root
 volumes:
   shared_data:
