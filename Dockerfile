@@ -12,6 +12,8 @@ WORKDIR /opt/spark
 # Install Python 3.9
 RUN apt-get update && apt-get install -y python3.9 python3.9-venv python3.9-dev
 
+RUN python3.9 -m pip install numpy nltk
+
 # Set env vars to use Python3.9 and not system default python3
 ENV PYSPARK_PYTHON=/usr/bin/python3.9 \
     PYSPARK_DRIVER_PYTHON=/usr/bin/python3.9
